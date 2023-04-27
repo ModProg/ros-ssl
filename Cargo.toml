@@ -1,0 +1,49 @@
+[package]
+name = "ros-ssl"
+version = "0.1.0"
+edition = "2021"
+categories = []
+description = ""
+keywords = []
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/ModProg/ros-ssl"
+documentation = "https://docs.rs/ros-ssl"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+alsa = "0.7.0"
+anyhow = "1.0.70"
+clap = { version = "4.2.4", features = ["derive"] }
+confique = { version = "0.2.3", default-features = false, features = ["toml"] }
+derive_more = "0.99.17"
+itertools = "0.10.5"
+json = "0.12.4"
+nalgebra = "0.32.2"
+ndarray = "0.15.6"
+num = "0.4.0"
+serde = { version = "1.0.160", features = ["derive"] }
+serde_with = "2.3.2"
+ssl = { version = "0.1.0", path = "../ssl" }
+toml = "0.7.3"
+unidirs = "0.1.1"
+yaml = "0.3.0"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[[package.metadata.release.pre-release-replacements]]
+file = "CHANGELOG.md"
+search = '## \[Unreleased\]'
+replace = """
+<!-- ## [Unreleased] -->
+## [{{version}}] - {{date}}\
+"""
+[[package.metadata.release.pre-release-replacements]]
+file = "CHANGELOG.md"
+search = '\[unreleased\]: (.*)/(v.*)\.\.\.HEAD'
+replace = """
+[unreleased]: $1/{{tag_name}}...HEAD
+[{{version}}]: $1/$2...{{tag_name}}\
+"""
