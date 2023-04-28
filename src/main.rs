@@ -94,7 +94,11 @@ enum Command {
     #[command(subcommand)]
     Config(ConfigCommand),
     /// Prints the angles found through the sound source localization
-    PrintSsl,
+    PrintSsl {
+        /// Print the angles in degrees
+        #[arg(long, short)]
+        degrees: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -168,7 +172,7 @@ fn main() -> Result {
                 if matches!(direction, Some(Direction::Capture)) {
                     let desc = desc.as_deref().unwrap_or_default().replace('\n', " ");
                     if let Some(name) = name {
-                        println!("{:-<16}","");
+                        println!("{:-<16}", "");
                         println!("{desc}:");
                         println!("    Name: {name:?}");
                         match PCM::new(name, Direction::Capture, false) {
@@ -232,13 +236,22 @@ fn main() -> Result {
                 println!("Created config at {path}");
             }
         }
-        Command::PrintSsl => {
+        Command::PrintSsl { degrees } => {
             let mbss = MbssConfig::default().create(config.mics.clone());
             eprintln!(
                 "Array zentroid: {:?}",
                 Position::from(mbss.array_centroid())
             );
-            eprintln!("azimuth,elevation");
+            eprintln!(
+                "{}",
+                (0..config.max_sources)
+                    .map(|i| format!("{:>21}\t", format!("source {i:3}")))
+                    .collect::<String>()
+            );
+            eprintln!(
+                "{}",
+                format!("{:>10} {:>10}\t", "azimuth", "elevation").repeat(config.max_sources)
+            );
             for_format!(config.format, {
                 let mut recorder = AudioRecorder::<FORMAT>::new(
                     config.alsa_name,
@@ -250,7 +263,11 @@ fn main() -> Result {
                 loop {
                     let sources = mbss.locate_spec(&recorder.record()?, config.max_sources);
                     for (az, el) in sources {
-                        print!("{az:5?},{el:5?}\t")
+                        if degrees {
+                            print!("{:9.0}° {:9.0}°\t", az.to_degrees(), el.to_degrees())
+                        } else {
+                            print!("{az:10.7} {el:10.7}\t")
+                        }
                     }
                     println!()
                 }

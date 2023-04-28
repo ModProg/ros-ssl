@@ -143,10 +143,11 @@ impl<T: Copy + IoFormat + Num + ToPrimitive> AudioRecorder<T> {
 
     // TODO borrow and reuse audio
     pub fn record(&mut self) -> Result<Audio, alsa::Error> {
+        _ = self.pcm.prepare();
         let io = self.pcm.io_checked()?;
         assert_eq!(
             io.readi(&mut self.buffer)?,
-            self.buffer.len() * self.channels
+            self.buffer.len() / self.channels
         );
         Ok(Audio::from_interleaved(
             &self.buffer,
