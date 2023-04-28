@@ -27,7 +27,8 @@ rosrust = "0.9.11"
 rosrust_msg = "0.1.7"
 serde = { version = "1.0.160", features = ["derive"] }
 serde_with = "2.3.2"
-ssl = { version = "0.1.0", path = "../ssl" }
+# ssl.path = "../ssl"
+ssl.git = "https://github.com/ModProg/ssl"
 toml = "0.7.3"
 unidirs = "0.1.1"
 yaml = "0.3.0"
