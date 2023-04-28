@@ -71,7 +71,7 @@ fn read_loop<S: IoFormat + Num + ToPrimitive>(pcm: &PCM, channels: usize) -> Res
 #[derive(Parser)]
 struct Clap {
     #[clap(subcommand)]
-    subcommand: Command,
+    subcommand: Option<Command>,
     /// Use a custom config
     #[arg(long, short)]
     config: Option<PathBuf>,
@@ -158,6 +158,10 @@ fn main() -> Result {
         config = config.file(config_path);
     };
     let config = config.file(config_file()).file(GLOBAL).load()?;
+    let Some(subcommand) = subcommand else {
+        eprintln!("Running as ros publisher, run with `--help` to show other options");
+        return ros();
+    };
     match subcommand {
         Command::Devices => {
             for ref hint @ Hint {
@@ -274,5 +278,16 @@ fn main() -> Result {
             });
         }
     }
+    Ok(())
+}
+
+fn ros() -> Result {
+    use rosrust_msg::SoundSource;
+
+    env_logger::init();
+    rosrust::init("sound-source-localisation");
+
+    let chatter_pub = rosrust::publish("sound-sources", 16);
+
     Ok(())
 }

@@ -17,11 +17,14 @@ anyhow = "1.0.70"
 clap = { version = "4.2.4", features = ["derive"] }
 confique = { version = "0.2.3", default-features = false, features = ["toml"] }
 derive_more = "0.99.17"
+env_logger = "0.10.0"
 itertools = "0.10.5"
 json = "0.12.4"
 nalgebra = "0.32.2"
 ndarray = "0.15.6"
 num = "0.4.0"
+rosrust = "0.9.11"
+rosrust_msg = "0.1.7"
 serde = { version = "1.0.160", features = ["derive"] }
 serde_with = "2.3.2"
 ssl = { version = "0.1.0", path = "../ssl" }
